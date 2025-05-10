@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>母親節卡片</title>
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'ZCOOL XiaoWei', serif;
+      text-align: center;
+      background-color: #fffdf8;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      font-family: 'ZCOOL XiaoWei', serif;
+      font-size: 20px;
+      padding: 12px 16px;
+      width: 80%;
+      max-width: 300px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    button {
+      font-family: 'ZCOOL XiaoWei', serif;
+      font-size: 18px;
+      padding: 10px 18px;
+      margin: 6px;
+      border: none;
+      border-radius: 6px;
+      background-color: #ffccd5;
+      color: #333;
+      cursor: pointer;
+    }
+    #card-container {
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
+    }
+    #card-img {
+      width: 100%;
+      max-width: 500px;
+      display: block;
+    }
+    #signature {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      color: #000000;
+      font-size: 28px;
+      font-weight: bold;
+      font-family: 'ZCOOL XiaoWei', serif;
+      text-shadow: 1px 1px 2px white;
+    }
+    #line-block {
+      background: #fff4f6;
+      border: 2px dashed #f55;
+      padding: 20px;
+      margin: 30px auto;
+      max-width: 400px;
+      border-radius: 10px;
+    }
+    canvas {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="line-block" style="display:none;">
+    <h3>LINE 內建瀏覽器會擋住下載功能</h3>
+    <p>請點下方按鈕開啟 Chrome 或 Safari</p>
+    <a href="https://yuchingkuo-01.github.io/for-you/" target="_blank">
+      <button>用瀏覽器開啟</button>
+    </a>
+  </div>
+
+  <div id="main-app" style="display:none;">
+    <h1>給媽媽的一句話</h1>
+    <input type="text" id="nameInput" placeholder="輸入你的名字（或小名）" />
+    <br />
+    <button onclick="updateSignature()">寫上我的名字</button>
+    <button onclick="showImage()">下載卡片送出愛</button>
+
+    <div id="card-container">
+      <img id="card-img" src="card.png" alt="卡片圖片" />
+      <div id="signature"></div>
+    </div>
+
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <script>
+    function updateSignature() {
+      const name = document.getElementById('nameInput').value.trim();
+      document.getElementById('signature').textContent = name || '';
+    }
+
+    function showImage() {
+      document.fonts.ready.then(() => {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = document.getElementById('card-img');
+        const signature = document.getElementById('signature').textContent;
+
+        const image = new Image();
+        image.crossOrigin = "anonymous";
+        image.src = img.src;
+        image.onload = () => {
+          canvas.width = image.width;
+          canvas.height = image.height;
+
+          ctx.drawImage(image, 0, 0);
+          ctx.font = "48px 'ZCOOL XiaoWei'";
+          ctx.fillStyle = "#000000";
+          ctx.textAlign = "right";
+          ctx.textBaseline = "bottom";
+          ctx.shadowColor = "white";
+          ctx.shadowBlur = 4;
+          ctx.fillText(signature, canvas.width - 20, canvas.height - 20);
+
+          const dataUrl = canvas.toDataURL("image/png");
+          const newWindow = window.open();
+          newWindow.document.write('<img src="' + dataUrl + '" style="width:100%;max-width:500px;" />');
+        };
+      });
+    }
+
+    const isLine = navigator.userAgent.toLowerCase().includes("line");
+    if (isLine) {
+      document.getElementById("line-block").style.display = "block";
+    } else {
+      document.getElementById("main-app").style.display = "block";
+    }
+  </script>
+</body>
+</html>
